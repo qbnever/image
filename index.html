@@ -1,1 +1,560 @@
-<h1>我的图床</h1>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老王爱文创 - 传统文创作品展示平台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #f7f3ed;
+            --bg-secondary: #ede6d8;
+            --bg-card: #fffdf9;
+            --text-primary: #2c2420;
+            --text-secondary: #6b5b4f;
+            --text-muted: #9a8b7e;
+            --accent: #b5443e;
+            --accent-hover: #963833;
+            --accent-light: rgba(181, 68, 62, 0.08);
+            --border: #d9cfc2;
+            --shadow: rgba(44, 36, 32, 0.08);
+            --shadow-hover: rgba(44, 36, 32, 0.15);
+            --gold: #c9a96e;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        a { text-decoration: none; color: inherit; }
+
+        /* 顶部导航 */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(247, 243, 237, 0.92);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            transition: box-shadow 0.3s;
+        }
+        .header.scrolled { box-shadow: 0 2px 20px var(--shadow); }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 42px; height: 42px; background: var(--accent); color: #fff;
+            font-size: 20px; font-weight: 700; display: flex; align-items: center;
+            justify-content: center; border-radius: 8px; font-family: "KaiTi", "STKaiti", serif;
+        }
+        .logo-text h1 { font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
+        .logo-text p { font-size: 11px; color: var(--text-muted); }
+
+        .nav { display: flex; gap: 8px; }
+        .nav-link {
+            padding: 8px 20px; font-size: 14px; color: var(--text-secondary);
+            border-radius: 20px; transition: all 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { color: var(--accent); background: var(--accent-light); }
+
+        /* 横幅 */
+        .banner {
+            margin-top: 70px; position: relative; height: 420px;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            background: linear-gradient(135deg, #3a2f2a 0%, #5c4a3d 40%, #7a6555 100%);
+        }
+        .banner::before {
+            content: ''; position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(201, 169, 110, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 30%, rgba(181, 68, 62, 0.1) 0%, transparent 50%);
+        }
+        .banner::after {
+            content: ''; position: absolute; inset: 0; opacity: 0.06;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(255,255,255,0.5) 50px, rgba(255,255,255,0.5) 51px),
+                repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.5) 50px, rgba(255,255,255,0.5) 51px);
+        }
+        .banner-content { position: relative; z-index: 2; text-align: center; color: #f0e8dc; }
+        .banner-content h2 {
+            font-size: 48px; font-weight: 300; letter-spacing: 12px; margin-bottom: 16px;
+            font-family: "KaiTi", "STKaiti", "SimSun", serif;
+        }
+        .banner-content > p { font-size: 16px; color: rgba(240, 232, 220, 0.7); letter-spacing: 4px; margin-bottom: 40px; }
+
+        .banner-stats { display: flex; gap: 48px; justify-content: center; }
+        .stat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .stat-number { font-size: 32px; font-weight: 300; color: var(--gold); font-family: "Georgia", serif; }
+        .stat-label { font-size: 13px; color: rgba(240, 232, 220, 0.5); letter-spacing: 2px; }
+
+        /* 作品区域 */
+        .works-section { padding: 60px 0 80px; }
+        .filter-bar { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 48px; }
+        .filter-btn {
+            display: flex; align-items: center; gap: 6px; padding: 10px 24px;
+            font-size: 14px; color: var(--text-secondary); background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: 24px; cursor: pointer;
+            transition: all 0.3s; font-family: inherit;
+        }
+        .filter-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+        .filter-btn.active { color: #fff; background: var(--accent); border-color: var(--accent); }
+        .filter-icon { font-size: 16px; }
+
+        .works-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+
+        .work-card {
+            background: var(--bg-card); border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--border); cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0; transform: translateY(20px); animation: cardIn 0.5s forwards;
+        }
+        .work-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px var(--shadow-hover); border-color: transparent; }
+
+        @keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+        .work-card:nth-child(1) { animation-delay: 0.05s; }
+        .work-card:nth-child(2) { animation-delay: 0.1s; }
+        .work-card:nth-child(3) { animation-delay: 0.15s; }
+        .work-card:nth-child(4) { animation-delay: 0.2s; }
+        .work-card:nth-child(5) { animation-delay: 0.25s; }
+        .work-card:nth-child(6) { animation-delay: 0.3s; }
+
+        .work-image { width: 100%; height: 240px; overflow: hidden; position: relative; }
+        .work-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+        .work-card:hover .work-image img { transform: scale(1.08); }
+
+        .image-placeholder {
+            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+            font-size: 64px; font-family: "KaiTi", "STKaiti", serif; color: rgba(255,255,255,0.6);
+        }
+        .image-placeholder[data-cat="stone"] { background: linear-gradient(135deg, #6b7b8d, #4a5568); }
+        .image-placeholder[data-cat="root-carving"] { background: linear-gradient(135deg, #8b6914, #6b4f12); }
+        .image-placeholder[data-cat="wood-carving"] { background: linear-gradient(135deg, #8b5e3c, #6d4528); }
+        .image-placeholder[data-cat="jade"] { background: linear-gradient(135deg, #5a9e7a, #3d7a5c); }
+        .image-placeholder[data-cat="painting"] { background: linear-gradient(135deg, #7a6b5d, #5c4d42); }
+
+        .work-info { padding: 20px; }
+        .work-category {
+            display: inline-block; font-size: 11px; color: var(--accent); background: var(--accent-light);
+            padding: 3px 10px; border-radius: 10px; margin-bottom: 10px; letter-spacing: 1px;
+        }
+        .work-title { font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; line-height: 1.4; }
+        .work-desc {
+            font-size: 13px; color: var(--text-muted); line-height: 1.7;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        .load-more { text-align: center; margin-top: 48px; }
+        .load-more-btn {
+            padding: 12px 40px; font-size: 14px; color: var(--text-secondary); background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: 24px; cursor: pointer;
+            transition: all 0.3s; font-family: inherit;
+        }
+        .load-more-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+        /* 关于老王 */
+        .about-section { padding: 80px 0; background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .about-content { display: flex; align-items: flex-start; gap: 48px; max-width: 800px; margin: 0 auto; }
+        .about-avatar { flex-shrink: 0; }
+        .avatar-placeholder {
+            width: 120px; height: 120px; background: var(--accent); color: #fff;
+            font-size: 48px; font-weight: 700; display: flex; align-items: center;
+            justify-content: center; border-radius: 50%; font-family: "KaiTi", "STKaiti", serif;
+        }
+        .about-text h2 { font-size: 28px; font-weight: 300; letter-spacing: 4px; margin-bottom: 16px; font-family: "KaiTi", "STKaiti", serif; }
+        .divider { width: 40px; height: 2px; background: var(--accent); margin-bottom: 20px; }
+        .about-desc { font-size: 15px; color: var(--text-secondary); line-height: 2; margin-bottom: 16px; }
+        .about-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+        .tag {
+            padding: 6px 16px; font-size: 12px; color: var(--text-secondary);
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; letter-spacing: 1px;
+        }
+
+        /* 页脚 */
+        .footer { padding: 48px 0 32px; background: var(--text-primary); color: rgba(255,255,255,0.6); }
+        .footer-content { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+        .footer-brand h3 { font-size: 20px; color: #f0e8dc; font-family: "KaiTi", "STKaiti", serif; letter-spacing: 4px; margin-bottom: 4px; }
+        .footer-brand p { font-size: 12px; letter-spacing: 2px; }
+        .footer-links { display: flex; gap: 24px; }
+        .footer-links a { font-size: 13px; color: rgba(255,255,255,0.5); transition: color 0.3s; }
+        .footer-links a:hover { color: var(--gold); }
+        .footer-copy p { font-size: 12px; color: rgba(255,255,255,0.3); }
+
+        /* 弹窗 */
+        .modal {
+            position: fixed; inset: 0; z-index: 1000; display: flex;
+            align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .modal.open { opacity: 1; visibility: visible; }
+        .modal-overlay { position: absolute; inset: 0; background: rgba(20, 16, 12, 0.7); backdrop-filter: blur(4px); }
+        .modal-content {
+            position: relative; z-index: 1; background: var(--bg-card); border-radius: 16px;
+            max-width: 860px; width: 90%; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+            transform: scale(0.9) translateY(20px); transition: transform 0.3s;
+        }
+        .modal.open .modal-content { transform: scale(1) translateY(0); }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px; z-index: 2; width: 36px; height: 36px;
+            border: none; background: rgba(0,0,0,0.4); color: #fff; font-size: 22px;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s;
+        }
+        .modal-close:hover { background: rgba(0,0,0,0.6); }
+        .modal-body { display: flex; }
+        .modal-image { flex: 1; min-width: 0; }
+        .modal-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px 0 0 16px; min-height: 400px; }
+        .modal-image .image-placeholder { border-radius: 16px 0 0 16px; min-height: 400px; font-size: 100px; }
+        .modal-info { flex: 1; padding: 40px 36px; display: flex; flex-direction: column; }
+        .modal-category {
+            display: inline-block; font-size: 12px; color: var(--accent); background: var(--accent-light);
+            padding: 4px 14px; border-radius: 12px; margin-bottom: 16px; align-self: flex-start; letter-spacing: 2px;
+        }
+        .modal-info h2 { font-size: 24px; font-weight: 600; margin-bottom: 16px; line-height: 1.4; }
+        .modal-info .divider { margin-bottom: 20px; }
+        .modal-desc { font-size: 14px; color: var(--text-secondary); line-height: 2; margin-bottom: 28px; }
+        .modal-meta { display: flex; flex-direction: column; gap: 16px; margin-top: auto; padding-top: 24px; border-top: 1px solid var(--border); }
+        .meta-item { display: flex; gap: 16px; }
+        .meta-label { font-size: 13px; color: var(--text-muted); min-width: 50px; flex-shrink: 0; }
+        .meta-value { font-size: 14px; color: var(--text-primary); }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .works-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .banner-content h2 { font-size: 36px; letter-spacing: 8px; }
+            .modal-body { flex-direction: column; }
+            .modal-image img, .modal-image .image-placeholder { border-radius: 16px 16px 0 0; min-height: 240px; }
+        }
+        @media (max-width: 600px) {
+            .works-grid { grid-template-columns: 1fr; gap: 16px; }
+            .banner { height: 320px; }
+            .banner-content h2 { font-size: 28px; letter-spacing: 4px; }
+            .banner-stats { gap: 24px; }
+            .stat-number { font-size: 24px; }
+            .about-content { flex-direction: column; align-items: center; text-align: center; }
+            .divider { margin: 0 auto 20px; }
+            .about-tags { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="container header-inner">
+            <div class="logo">
+                <div class="logo-icon">文</div>
+                <div class="logo-text">
+                    <h1>老王爱文创</h1>
+                    <p>发现传统工艺之美</p>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="#works" class="nav-link active" data-category="all">全部作品</a>
+                <a href="#about" class="nav-link">关于老王</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 横幅区域 -->
+    <section class="banner">
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+            <h2>匠心传承 · 文创之美</h2>
+            <p>每一块石头都有故事，每一根木头都有灵魂</p>
+            <div class="banner-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalCount">0</span>
+                    <span class="stat-label">精选作品</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">5</span>
+                    <span class="stat-label">作品分类</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">10+</span>
+                    <span class="stat-label">年收藏经验</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品展示区域 -->
+    <section class="works-section" id="works">
+        <div class="container">
+            <div class="filter-bar">
+                <button class="filter-btn active" data-category="all">
+                    <span class="filter-icon">&#9670;</span> 全部作品
+                </button>
+                <button class="filter-btn" data-category="stone">
+                    <span class="filter-icon">&#9737;</span> 奇石
+                </button>
+                <button class="filter-btn" data-category="root-carving">
+                    <span class="filter-icon">&#127794;</span> 根雕
+                </button>
+                <button class="filter-btn" data-category="wood-carving">
+                    <span class="filter-icon">&#9936;</span> 木雕
+                </button>
+                <button class="filter-btn" data-category="jade">
+                    <span class="filter-icon">&#9830;</span> 玉器
+                </button>
+                <button class="filter-btn" data-category="painting">
+                    <span class="filter-icon">&#9998;</span> 字画
+                </button>
+            </div>
+
+            <div class="works-grid" id="worksGrid"></div>
+
+            <div class="load-more" id="loadMore">
+                <button class="load-more-btn">加载更多作品</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于老王 -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-avatar">
+                    <div class="avatar-placeholder">王</div>
+                </div>
+                <div class="about-text">
+                    <h2>关于老王</h2>
+                    <div class="divider"></div>
+                    <p class="about-desc">
+                        老王，一位热爱传统文化艺术的收藏爱好者。十余年来，足迹遍布大江南北，
+                        从山野奇石到名家字画，从天然根雕到精美玉器，每一件作品都承载着匠人的心血与智慧。
+                    </p>
+                    <p class="about-desc">
+                        "老王爱文创"致力于发现和分享那些被遗忘在传统角落里的艺术珍品，
+                        让每一件作品都能找到欣赏它的人。
+                    </p>
+                    <div class="about-tags">
+                        <span class="tag">奇石收藏</span>
+                        <span class="tag">根雕鉴赏</span>
+                        <span class="tag">木雕工艺</span>
+                        <span class="tag">玉器品鉴</span>
+                        <span class="tag">字画收藏</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>老王爱文创</h3>
+                    <p>匠心传承 · 文创之美</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#works">作品展示</a>
+                    <a href="#about">关于老王</a>
+                </div>
+                <div class="footer-copy">
+                    <p>&copy; 2026 老王爱文创. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 作品详情弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modalImg" src="" alt="">
+                    <div class="image-placeholder" id="modalPlaceholder"></div>
+                </div>
+                <div class="modal-info">
+                    <span class="modal-category" id="modalCategory"></span>
+                    <h2 id="modalTitle"></h2>
+                    <div class="divider"></div>
+                    <p class="modal-desc" id="modalDesc"></p>
+                    <div class="modal-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">分类</span>
+                            <span class="meta-value" id="modalCategory2"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">材质</span>
+                            <span class="meta-value" id="modalMaterial"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">尺寸</span>
+                            <span class="meta-value" id="modalSize"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        // 作品数据
+        const worksData = [
+            { id: 1, title: '海上生明月', category: 'stone', categoryName: '奇石', material: '黄河画面石', size: '45cm × 28cm × 32cm', image: 'https://image-ax1.pages.dev/img/黄河画面石.png', description: '此石产自黄河流域，为天然黄河画面石，石面纹理自然晕染交织，精准勾勒出皓月悬空、海波荡漾的经典意境，光影层次分明，画面浑然天成，无人工雕琢痕迹，尽显自然造化的神奇与诗意，是画面石中难得的精品。', shortDesc: '一轮明月映碧波，藏尽唐诗千古韵。' },
+            { id: 2, title: '黑珍珠', category: 'stone', categoryName: '奇石', material: '黑珍珠石', size: '60cm × 35cm × 40cm', image: 'https://image-ax1.pages.dev/img/黑珍珠.png', description: '此石为黑珍珠石，石质细腻致密，通体色泽乌黑油亮，质感如深海珍珠般莹润饱满，石形圆润规整，线条流畅自然，整体素雅大气，自带沉稳内敛的东方美学韵味，案头陈设极具格调。', shortDesc: '墨色凝光藏内敛，一颗明珠落案头。' },
+            { id: 3, title: '人之初（猿）', category: 'stone', categoryName: '奇石', material: '象形石', size: '38cm × 25cm × 22cm', image: 'https://image-ax1.pages.dev/img/人之初（猿）.png', description: '此石为天然象形石，石体轮廓惟妙惟肖地呈现出古猿的经典形态，身形比例协调，头部与躯干的线条生动传神，仿佛再现了人类起源之初的原始模样，象形度极高，兼具历史厚重感与艺术感染力。', shortDesc: '一石凝塑生命源，回望人类初醒时。' },
+            { id: 4, title: '老子', category: 'stone', categoryName: '奇石', material: '松花石', size: '18cm × 12cm × 10cm', image: 'https://image-ax1.pages.dev/img/老子.png', description: '此石产自东北长白山流域，为天然松花石，石质坚硬致密，纹理清晰古朴。石体造型神似道家始祖老子，身形佝偻、衣袂飘飘，神态悠然自得，尽显仙风道骨之姿，文化意蕴与观赏价值兼备。', shortDesc: '道骨仙风凝石上，千古哲思入自然。' },
+            { id: 5, title: '北宣石', category: 'stone', categoryName: '奇石', material: '北宣石', size: '85cm × 45cm × 50cm', image: 'https://image-ax1.pages.dev/img/北宣石.png', description: '此石为北宣石，石质洁白细腻，质地温润如玉，石体纹理自然交错，形态雅致脱俗，兼具南方宣石的素雅之美与北方奇石的雄浑之气，石面肌理丰富，是传统案头奇石的经典品类。', shortDesc: '素白凝霜含雅韵，方寸之间见山河。' },
+            { id: 6, title: '关子爷河石（一）', category: 'stone', categoryName: '奇石', material: '关子爷河石', size: '62cm × 38cm × 48cm', image: 'https://image-ax1.pages.dev/img/关子爷河石.png', description: '此石产自关子爷河流域，为天然河石，经亿万年水流冲刷与砂石打磨，石面光滑圆润，石形自然舒展，色泽古朴厚重，每一处痕迹都镌刻着河流岁月的印记，质朴中彰显自然本真。', shortDesc: '流水千年磨璞玉，岁月留痕见初心。' },
+            { id: 7, title: '小善坡沙石', category: 'stone', categoryName: '奇石', material: '小善坡沙石', size: '70cm × 55cm × 35cm', image: 'https://image-ax1.pages.dev/img/小善坡沙石.png', description: '此石为小善坡沙石，石质纹理粗犷自然，层次错落分明，色彩质朴醇厚，石体形态独特，是经长期风化与流水侵蚀形成的天然佳作，充满山野自然之趣，展现出原始粗犷的自然之美。', shortDesc: '粗粝藏真山野气，天然雕琢见匠心。' },
+            { id: 8, title: '关子爷河石（二）', category: 'stone', categoryName: '奇石', material: '关子爷河石', size: '120cm × 35cm × 4cm', image: 'https://image-ax1.pages.dev/img/关子爷河石（二）.png', description: '此石为关子爷河石，经河水长期冲刷侵蚀，石面纹理丰富多变，石形错落有致，色泽沉稳内敛，纹路走势自然流畅，每一道沟壑都凝聚着自然的鬼斧神工，极具观赏与收藏潜力。', shortDesc: '沟壑纵横藏造化，一石尽览山河魂。' },
+            { id: 9, title: '梦回', category: 'stone', categoryName: '奇石', material: '关子河象形石', size: '180cm × 120cm × 6cm', image: 'https://image-ax1.pages.dev/img/梦回.png', description: '此石产自关子河流域，为天然象形石，石体造型空灵飘逸，线条婉转柔和，整体轮廓勾勒出朦胧悠远的意境，仿佛带人穿越时空、梦回往昔，给人无限的遐想空间，意境感十足。', shortDesc: '一石入梦越千年，朦胧意境醉人心。' },
+            { id: 10, title: '恐龙蛋', category: 'stone', categoryName: '奇石', material: '恐龙蛋石', size: '55cm × 30cm × 35cm', image: 'https://image-ax1.pages.dev/img/恐龙蛋.png', description: '此石形态酷似远古恐龙蛋化石，石形圆润饱满，表面纹理分布自然，质感厚重古朴，外观逼真传神，仿佛封存了亿万年前的远古时光，兼具科普价值与观赏收藏价值。', shortDesc: '圆石凝存亿年史，远古遗珍落人间。' },
+            { id: 11, title: '和田玉·平安扣', category: 'jade', categoryName: '玉器', material: '和田玉籽料', size: '直径 4.5cm', description: '精选新疆和田籽料，玉质温润如脂，色泽洁白细腻。平安扣造型简洁大方，寓意平安吉祥，是和田玉中最为经典的器型之一。', shortDesc: '精选新疆和田籽料，玉质温润如脂，寓意平安吉祥。' },
+            { id: 12, title: '翡翠白菜', category: 'jade', categoryName: '玉器', material: '翡翠', size: '15cm × 8cm × 6cm', description: '以翠绿与乳白相间的翡翠为原料，巧妙利用天然色泽雕刻白菜造型。菜叶脉络清晰，菜虫栩栩如生，取"百财聚来"之意，为玉器中经典题材。', shortDesc: '巧妙利用天然色泽雕刻白菜造型，取"百财聚来"之意。' },
+            { id: 13, title: '碧玉·如意', category: 'jade', categoryName: '玉器', material: '碧玉', size: '22cm × 5cm × 2cm', description: '精选俄罗斯碧玉，色泽翠绿欲滴，质地细腻均匀。如意造型典雅，头尾比例协调，柄部雕以祥云纹饰，寓意万事如意、吉祥如愿。', shortDesc: '色泽翠绿欲滴，如意造型典雅，寓意万事如意。' },
+            { id: 14, title: '行书·兰亭集序', category: 'painting', categoryName: '字画', material: '宣纸水墨', size: '全卷 350cm × 25cm', description: '以行书书写王羲之兰亭集序全文，笔法流畅自然，气韵生动。墨色浓淡相宜，字与字之间顾盼生姿，整幅作品如行云流水，尽显书法之美。', shortDesc: '行书书写兰亭集序全文，笔法流畅自然，气韵生动。' },
+            { id: 15, title: '山水画·千里江山', category: 'painting', categoryName: '字画', material: '绢本设色', size: '180cm × 80cm', description: '青绿山水巨幅作品，以石青、石绿为主色，描绘千里江山的壮丽景色。近景树木葱茏，中景山峦叠嶂，远景水天一色，层次分明，气势恢宏。', shortDesc: '青绿山水巨幅作品，描绘千里江山壮丽景色，气势恢宏。' },
+            { id: 16, title: '梅花图·傲雪凌霜', category: 'painting', categoryName: '字画', material: '宣纸水墨', size: '138cm × 68cm', description: '以写意笔法绘老梅一株，枝干苍劲如铁，梅花点点绽放。浓淡墨色交织，表现梅花傲雪凌霜之高洁品格。右上角题诗一首，书画相得益彰。', shortDesc: '写意笔法绘老梅，枝干苍劲如铁，表现傲雪凌霜之高洁品格。' },
+            { id: 17, title: '花鸟·富贵牡丹', category: 'painting', categoryName: '字画', material: '绢本设色', size: '136cm × 66cm', description: '工笔重彩牡丹图，以细腻的笔触描绘牡丹盛开之姿。花瓣层层叠叠，色彩富丽堂皇，配以绿叶衬托，尽显"唯有牡丹真国色"之风采。', shortDesc: '工笔重彩牡丹图，描绘牡丹盛开之姿，富丽堂皇。' },
+            { id: 18, title: '草书·将进酒', category: 'painting', categoryName: '字画', material: '宣纸水墨', size: '全卷 280cm × 30cm', description: '以狂草书写李白将进酒，笔走龙蛇，气势如虹。墨色奔放，线条跌宕起伏，将诗中豪迈之气表现得淋漓尽致，乃草书佳作。', shortDesc: '狂草书写李白将进酒，笔走龙蛇，气势如虹。' },
+        ];
+
+        const worksGrid = document.getElementById('worksGrid');
+        const loadMoreEl = document.getElementById('loadMore');
+        const modal = document.getElementById('modal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalClose = document.getElementById('modalClose');
+        const totalCountEl = document.getElementById('totalCount');
+        const header = document.querySelector('.header');
+
+        const CATEGORY_ICONS = {
+            'stone': '石', 'root-carving': '根', 'wood-carving': '木', 'jade': '玉', 'painting': '字'
+        };
+
+        let currentCategory = 'all';
+        const perPage = 9;
+        let displayedCount = 0;
+
+        totalCountEl.textContent = worksData.length;
+        renderWorks();
+
+        // 分类筛选
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                renderWorks();
+            });
+        });
+
+        // 导航链接高亮
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const cat = link.dataset.category;
+                if (cat) {
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.toggle('active', b.dataset.category === cat);
+                    });
+                    currentCategory = cat;
+                    renderWorks();
+                }
+            });
+        });
+
+        function renderWorks() {
+            const filtered = currentCategory === 'all' ? worksData : worksData.filter(w => w.category === currentCategory);
+            worksGrid.innerHTML = '';
+            displayedCount = 0;
+            const toShow = filtered.slice(0, perPage);
+            toShow.forEach((work, i) => {
+                worksGrid.appendChild(createCard(work, i));
+                displayedCount++;
+            });
+            if (filtered.length > perPage) {
+                loadMoreEl.style.display = 'block';
+                loadMoreEl.querySelector('.load-more-btn').textContent = `还有 ${filtered.length - perPage} 件作品`;
+            } else {
+                loadMoreEl.style.display = 'none';
+            }
+        }
+
+        function createCard(work, index) {
+            const card = document.createElement('div');
+            card.className = 'work-card';
+            card.style.animationDelay = `${index * 0.06}s`;
+            const hasImage = work.image;
+            card.innerHTML = `
+                <div class="work-image">
+                    ${hasImage
+                        ? `<img src="${work.image}" alt="${work.title}" loading="lazy">`
+                        : `<div class="image-placeholder" data-cat="${work.category}">${CATEGORY_ICONS[work.category] || '文'}</div>`
+                    }
+                </div>
+                <div class="work-info">
+                    <span class="work-category">${work.categoryName}</span>
+                    <h3 class="work-title">${work.title}</h3>
+                    <p class="work-desc">${work.shortDesc}</p>
+                </div>`;
+            card.addEventListener('click', () => openModal(work));
+            return card;
+        }
+
+        loadMoreEl.querySelector('.load-more-btn').addEventListener('click', () => {
+            const filtered = currentCategory === 'all' ? worksData : worksData.filter(w => w.category === currentCategory);
+            const nextBatch = filtered.slice(displayedCount, displayedCount + perPage);
+            nextBatch.forEach((work, i) => {
+                worksGrid.appendChild(createCard(work, displayedCount + i));
+            });
+            displayedCount += nextBatch.length;
+            if (displayedCount >= filtered.length) {
+                loadMoreEl.style.display = 'none';
+            } else {
+                loadMoreEl.querySelector('.load-more-btn').textContent = `还有 ${filtered.length - displayedCount} 件作品`;
+            }
+        });
+
+        function openModal(work) {
+            const modalImg = document.getElementById('modalImg');
+            const placeholder = document.getElementById('modalPlaceholder');
+            if (work.image) {
+                modalImg.style.display = 'block';
+                modalImg.src = work.image;
+                modalImg.alt = work.title;
+                placeholder.style.display = 'none';
+            } else {
+                modalImg.style.display = 'none';
+                placeholder.style.display = 'flex';
+                placeholder.className = 'image-placeholder';
+                placeholder.setAttribute('data-cat', work.category);
+                placeholder.textContent = CATEGORY_ICONS[work.category] || '文';
+            }
+            document.getElementById('modalCategory').textContent = work.categoryName;
+            document.getElementById('modalTitle').textContent = work.title;
+            document.getElementById('modalDesc').textContent = work.description;
+            document.getElementById('modalCategory2').textContent = work.categoryName;
+            document.getElementById('modalMaterial').textContent = work.material;
+            document.getElementById('modalSize').textContent = work.size;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', closeModal);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 10);
+        });
+    })();
+    </script>
+</body>
+</html>

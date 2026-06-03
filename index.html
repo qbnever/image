@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>老王爱文创 - 传统文创作品展示平台</title>
+    <title>众艺文创 - 传统文创作品展示平台</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -49,9 +49,9 @@
 
         .logo { display: flex; align-items: center; gap: 12px; }
         .logo-icon {
-            width: 42px; height: 42px; background: var(--accent); color: #fff;
-            font-size: 20px; font-weight: 700; display: flex; align-items: center;
-            justify-content: center; border-radius: 8px; font-family: "KaiTi", "STKaiti", serif;
+            width: 42px; height: 42px;
+            border-radius: 8px;
+            object-fit: cover;
         }
         .logo-text h1 { font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
         .logo-text p { font-size: 11px; color: var(--text-muted); }
@@ -161,10 +161,10 @@
         .about-section { padding: 80px 0; background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
         .about-content { display: flex; align-items: flex-start; gap: 48px; max-width: 800px; margin: 0 auto; }
         .about-avatar { flex-shrink: 0; }
-        .avatar-placeholder {
-            width: 120px; height: 120px; background: var(--accent); color: #fff;
-            font-size: 48px; font-weight: 700; display: flex; align-items: center;
-            justify-content: center; border-radius: 50%; font-family: "KaiTi", "STKaiti", serif;
+        .avatar-img {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
         }
         .about-text h2 { font-size: 28px; font-weight: 300; letter-spacing: 4px; margin-bottom: 16px; font-family: "KaiTi", "STKaiti", serif; }
         .divider { width: 40px; height: 2px; background: var(--accent); margin-bottom: 20px; }
@@ -247,15 +247,15 @@
     <header class="header">
         <div class="container header-inner">
             <div class="logo">
-                <div class="logo-icon">文</div>
+                <img class="logo-icon" src="https://image-ax1.pages.dev/img/众艺文创.jpg" alt="众艺文创">
                 <div class="logo-text">
-                    <h1>老王爱文创</h1>
+                    <h1>众艺文创</h1>
                     <p>发现传统工艺之美</p>
                 </div>
             </div>
             <nav class="nav">
                 <a href="#works" class="nav-link active" data-category="all">全部作品</a>
-                <a href="#about" class="nav-link">关于老王</a>
+                <a href="#about" class="nav-link">关于</a>
             </nav>
         </div>
     </header>
@@ -315,23 +315,23 @@
         </div>
     </section>
 
-    <!-- 关于老王 -->
+    <!-- 关于众艺文创 -->
     <section class="about-section" id="about">
         <div class="container">
             <div class="about-content">
                 <div class="about-avatar">
-                    <div class="avatar-placeholder">王</div>
+                    <img class="avatar-img" src="https://image-ax1.pages.dev/img/众艺文创.jpg" alt="众艺文创">
                 </div>
                 <div class="about-text">
-                    <h2>关于老王</h2>
+                    <h2>众艺文创</h2>
                     <div class="divider"></div>
                     <p class="about-desc">
-                        老王，一位热爱传统文化艺术的收藏爱好者。十余年来，足迹遍布大江南北，
-                        从山野奇石到名家字画，从天然根雕到精美玉器，每一件作品都承载着匠人的心血与智慧。
+                        众艺文创坐落于山西省汾西县，是一家专注于传统工艺美术品收藏与展示的文化门店。
+                        店内汇聚了来自全国各地的奇石珍品、根雕木艺、玉器字画等文创精品，每一件都经过精心甄选。
                     </p>
                     <p class="about-desc">
-                        "老王爱文创"致力于发现和分享那些被遗忘在传统角落里的艺术珍品，
-                        让每一件作品都能找到欣赏它的人。
+                        我们秉承"以石会友、以艺传情"的理念，致力于搭建一个传统文化艺术的交流平台，
+                        让更多人领略自然造化的神奇与传统工艺的魅力，欢迎各界藏友莅临品鉴交流。
                     </p>
                     <div class="about-tags">
                         <span class="tag">奇石收藏</span>
@@ -350,15 +350,15 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <h3>老王爱文创</h3>
+                    <h3>众艺文创</h3>
                     <p>匠心传承 · 文创之美</p>
                 </div>
                 <div class="footer-links">
                     <a href="#works">作品展示</a>
-                    <a href="#about">关于老王</a>
+                    <a href="#about">众艺文创</a>
                 </div>
                 <div class="footer-copy">
-                    <p>&copy; 2026 老王爱文创. All rights reserved.</p>
+                    <p>&copy; 2026 众艺文创. All rights reserved.</p>
                 </div>
             </div>
         </div>
